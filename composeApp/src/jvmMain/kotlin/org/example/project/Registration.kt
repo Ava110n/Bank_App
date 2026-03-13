@@ -4,13 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,13 +21,17 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 @Composable
-fun registration() {
+fun registration(status: MutableState<Windows>, db: DataBase) {
+    if(status.value != Windows.REGISTRATION)
+        return
+
     var name by remember { mutableStateOf("") }
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var password_confirm by remember { mutableStateOf("") }
+    var passwordConfirm by remember { mutableStateOf("") }
     Box(modifier = Modifier.background(Color.LightGray)) {
-        TextButton(onClick = {}) { Text("Назад") }
+        TextButton(onClick = {status.value = Windows.AUTHORIZATION})
+            { Text("Назад") }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -47,11 +50,13 @@ fun registration() {
                 label = { Text("Пароль") })
 
             TextField(
-                value = password_confirm, onValueChange = { newText -> password_confirm = newText },
+                value = passwordConfirm, onValueChange = { newText -> passwordConfirm = newText },
                 visualTransformation = PasswordVisualTransformation('*'),
                 label = { Text("Подтвердите пароль") })
 
-            TextButton(onClick = {}, shape = RectangleShape) {
+            TextButton(onClick = {
+                db.addUser(name, login, password)
+            }, shape = RectangleShape) {
                 Text("Зарегистрироваться")
             }
         }

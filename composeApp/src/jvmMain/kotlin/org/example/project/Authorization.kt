@@ -10,6 +10,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,9 +22,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 @Composable
-fun authorization(status: Status) {
-    if (status.screens != Screens.LOGIN)
+fun authorization(status: MutableState<Windows>, db: DataBase) {
+    if(status.value != Windows.AUTHORIZATION)
         return
+
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -40,12 +42,15 @@ fun authorization(status: Status) {
                 placeholder = {Text("Пароль")})*/
             Row(horizontalArrangement = Arrangement.SpaceBetween){
                 Column {
-                    TextButton(onClick = {status.screens = Screens.REGISTRATION}, shape = RectangleShape) {
+                    TextButton(onClick = {status.value  = Windows.REGISTRATION},
+                        shape = RectangleShape) {
                         Text("Создать аккаунт")
                     }
                 }
                 Column {
-                    TextButton(onClick = {}, shape = RectangleShape) {
+                    TextButton(onClick = {
+                        db.login(login, password)
+                    }, shape = RectangleShape) {
                         Text("Войти")
                     }
                 }

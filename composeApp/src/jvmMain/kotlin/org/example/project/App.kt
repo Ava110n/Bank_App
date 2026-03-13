@@ -37,7 +37,9 @@ import kotlinproject.composeapp.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App() {
-    var screen = Status(Screens.LOGIN)
-
-    authorization(screen)
+    var status = remember { mutableStateOf(Windows.AUTHORIZATION)}
+    val db = DataBase()
+    //db.create()
+    authorization(status, db)
+    registration(status, db)
 }
